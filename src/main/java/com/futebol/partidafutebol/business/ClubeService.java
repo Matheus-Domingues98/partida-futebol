@@ -24,10 +24,6 @@ public class ClubeService {
                 () -> new RuntimeException("Clube nao encontrado"));
     }
 
-    public void deleteByNome(String nome) {
-        clubeRepository.deleteByNome(nome);
-    }
-
      public void atualizarClubePorId(Integer id, Clube clube) {
         Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Clube nao encontrado"));
