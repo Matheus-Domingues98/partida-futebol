@@ -3,6 +3,8 @@ package com.futebol.partidafutebol.infrastructure.entitys;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "estadio")
 @Getter
@@ -19,6 +21,7 @@ public class Estadio {
 
     @Column(name = "nome", unique = true)
     private String nome;
+
 
 
 

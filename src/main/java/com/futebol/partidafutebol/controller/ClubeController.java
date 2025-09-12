@@ -36,6 +36,4 @@ public class ClubeController {
         clubeService.atualizarClubePorId(id, clube);
         return ResponseEntity.ok().build();
     }
-
-
 }
