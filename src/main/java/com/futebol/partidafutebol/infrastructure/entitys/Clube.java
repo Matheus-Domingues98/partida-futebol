@@ -29,5 +29,5 @@ public class Clube {
     private Date dataCriacao;
 
     @Column(name = "status")
-    private boolean status;
+    private boolean ativo;
 }

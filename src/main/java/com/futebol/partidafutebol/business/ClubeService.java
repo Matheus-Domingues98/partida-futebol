@@ -3,16 +3,20 @@ package com.futebol.partidafutebol.business;
 
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.repository.ClubeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class ClubeService {
-    @Autowired
+
     private ClubeRepository clubeRepository;
 
-    public ClubeService(ClubeRepository clubeRepository) {
-        this.clubeRepository = clubeRepository;
+    public List<Clube> listarTodosClubes() {
+        return clubeRepository.findAll();
     }
 
     public Clube salvarClube(Clube clube) {
@@ -37,6 +41,22 @@ public class ClubeService {
 
     public void deletarClubePorNome(String nome) {
         clubeRepository.deleteByNome(nome);
+    }
+
+    public Clube inativarClubePorId(Integer id) {
+        Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Clube nao encontrado"));
+        clubeEntity.setAtivo(false);
+
+        return  clubeRepository.save(clubeEntity);
+    }
+
+    public Clube ativarClubePorId(Integer id) {
+        Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Clube nao encontrado"));
+        clubeEntity.setAtivo(true);
+
+        return clubeRepository.save(clubeEntity);
     }
 }
 

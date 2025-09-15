@@ -3,20 +3,24 @@ package com.futebol.partidafutebol.business;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import com.futebol.partidafutebol.infrastructure.repository.EstadioRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class EstadioService {
-    @Autowired
-    private EstadioRepository estadioRepository;
+import java.util.List;
 
-    public EstadioService(EstadioRepository estadioRepository) {
-        this.estadioRepository = estadioRepository;
-    }
+@Service
+@RequiredArgsConstructor
+public class EstadioService {
+
+    private EstadioRepository estadioRepository;
 
     public Estadio salvarEstadio(Estadio estadio) {
         return estadioRepository.saveAndFlush(estadio);
+    }
+
+    public List<Estadio> listarTodosEstadios() {
+        return estadioRepository.findAll();
     }
 
     public void deletarEstadioPorNome(String nome) {
