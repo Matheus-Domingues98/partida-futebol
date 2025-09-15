@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ClubeService {
-
+    @Autowired
     private ClubeRepository clubeRepository;
 
     public List<Clube> listarTodosClubes() {

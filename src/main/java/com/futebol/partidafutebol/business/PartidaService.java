@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PartidaService {
-
+    @Autowired
     private PartidaRepository partidaRepository;
 
     public Partida salvarPartida(Partida partida) {

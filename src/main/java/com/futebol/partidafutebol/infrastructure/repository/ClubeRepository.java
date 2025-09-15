@@ -2,6 +2,7 @@ package com.futebol.partidafutebol.infrastructure.repository;
 
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

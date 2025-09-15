@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EstadioService {
-
+    @Autowired
     private EstadioRepository estadioRepository;
 
     public Estadio salvarEstadio(Estadio estadio) {
