@@ -1,6 +1,7 @@
 package com.futebol.partidafutebol.controller;
 
 import com.futebol.partidafutebol.business.PartidaService;
+import com.futebol.partidafutebol.dto.PartidaDto;
 import com.futebol.partidafutebol.infrastructure.entitys.Partida;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class PartidaController {
     }
 
     @PostMapping
-    public ResponseEntity<Partida> salvarPartida(@RequestBody Partida partida) {
+    public ResponseEntity<Partida> salvarPartida(@RequestBody PartidaDto partida) {
         if (partida.getClubeMandante().equals(partida.getClubeVisitante())) {
             throw  new IllegalArgumentException("Clubes devem ser diferentes");
         }
@@ -35,14 +36,14 @@ public class PartidaController {
         return ResponseEntity.ok(partidaService.buscarPartidaPorId(id));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public  ResponseEntity<Partida> deletarPartidaPorId(@PathVariable Integer id) {
         partidaService.deletarPartidaPorId(id);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Partida> atualizarPartidaPorId(@PathVariable Integer id, @RequestBody Partida partida) {
+    public ResponseEntity<Partida> atualizarPartidaPorId(@PathVariable Integer id, @RequestBody PartidaDto partida) {
         partidaService.atualizarPartidaPorId(id, partida);
         return ResponseEntity.ok().build();
     }

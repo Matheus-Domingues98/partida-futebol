@@ -1,19 +1,19 @@
 package com.futebol.partidafutebol.business;
 
 
+import com.futebol.partidafutebol.dto.ClubeDto;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.repository.ClubeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ClubeService {
-    @Autowired
-    private ClubeRepository clubeRepository;
+    private final ClubeRepository clubeRepository;
 
     public List<Clube> listarTodosClubes() {
         return clubeRepository.findAll();
@@ -28,12 +28,16 @@ public class ClubeService {
                 () -> new RuntimeException("Clube nao encontrado"));
     }
 
-     public void atualizarClubePorId(Integer id, Clube clube) {
+     @Transactional
+     public void atualizarClubePorId(Integer id, ClubeDto clube) {
         Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Clube nao encontrado"));
         Clube clubeAtualizado = Clube.builder()
-                .nome(clube.getNome() != null ? clube.getNome() : clubeEntity.getNome())
                 .id(clubeEntity.getId())
+                .nome(clube.getNome() != null ? clube.getNome() : clubeEntity.getNome())
+                .uf(clube.getUf() != null ? clube.getUf() : clubeEntity.getUf())
+                .dataCriacao(clube.getDataCriacao() != null ? clube.getDataCriacao() : clubeEntity.getDataCriacao())
+                .ativo(clube.isAtivo() || clubeEntity.isAtivo()) // Mantém true se qualquer um for true
                 .build();
 
         clubeRepository.saveAndFlush(clubeAtualizado);

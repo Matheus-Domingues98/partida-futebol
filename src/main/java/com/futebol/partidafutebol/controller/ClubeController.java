@@ -1,6 +1,7 @@
 package com.futebol.partidafutebol.controller;
 
 import com.futebol.partidafutebol.business.ClubeService;
+import com.futebol.partidafutebol.dto.ClubeDto;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 
 import lombok.RequiredArgsConstructor;
@@ -28,20 +29,20 @@ public class ClubeController {
         return ResponseEntity.ok(clubeSalvo);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{nome}")
     public ResponseEntity<Clube> buscarClubePorNome(@PathVariable String nome) {
         return ResponseEntity.ok(clubeService.buscarClubePorNome(nome));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deletarClubePoNome(@PathVariable String nome) {
+    @DeleteMapping("/{nome}")
+    public ResponseEntity<Void> deletarClubePorNome(@PathVariable String nome) {
         clubeService.deletarClubePorNome(nome);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizarClubePorId(@PathVariable Integer id, @RequestBody Clube clube) {
-        clubeService.atualizarClubePorId(id, clube);
+    public ResponseEntity<Void> atualizarClubePorId(@PathVariable Integer id, @RequestBody ClubeDto clubeDto) {
+        clubeService.atualizarClubePorId(id, clubeDto);
         return ResponseEntity.ok().build();
     }
 

@@ -1,21 +1,24 @@
 package com.futebol.partidafutebol.business;
 
+import com.futebol.partidafutebol.dto.EstadioDto;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import com.futebol.partidafutebol.infrastructure.repository.EstadioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class EstadioService {
-    @Autowired
-    private EstadioRepository estadioRepository;
+    private final EstadioRepository estadioRepository;
 
-    public Estadio salvarEstadio(Estadio estadio) {
+    public Estadio salvarEstadio(EstadioDto estadioDto) {
+        Estadio estadio = Estadio.builder()
+                .nome(estadioDto.getNome())
+                .build();
         return estadioRepository.saveAndFlush(estadio);
     }
 
@@ -33,11 +36,12 @@ public class EstadioService {
         );
     }
 
-    public void atualizarEstadioPorId(Integer id, Estadio estadio) {
+    @Transactional
+    public void atualizarEstadioPorId(Integer id, EstadioDto estadioDto) {
         Estadio estadioEntity = estadioRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Estadio nao encontrado"));
         Estadio estadioAtualizado = Estadio.builder()
-                .nome(estadio.getNome() != null ? estadio.getNome() : estadioEntity.getNome())
+                .nome(estadioDto.getNome() != null ? estadioDto.getNome() : estadioEntity.getNome())
                 .id(estadioEntity.getId())
                 .build();
 

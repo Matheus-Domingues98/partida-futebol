@@ -1,20 +1,27 @@
 package com.futebol.partidafutebol.business;
 
+import com.futebol.partidafutebol.dto.PartidaDto;
 import com.futebol.partidafutebol.infrastructure.entitys.Partida;
 import com.futebol.partidafutebol.infrastructure.repository.PartidaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PartidaService {
-    @Autowired
-    private PartidaRepository partidaRepository;
+    private final PartidaRepository partidaRepository;
 
-    public Partida salvarPartida(Partida partida) {
+    public Partida salvarPartida(PartidaDto partidaDto) {
+        Partida partida = Partida.builder()
+                .clubeMandante(partidaDto.getClubeMandante())
+                .clubeVisitante(partidaDto.getClubeVisitante())
+                .estadioPartida(partidaDto.getEstadioPartida())
+                .dataHora(partidaDto.getDataHora())
+                .resultado(partidaDto.getResultado())
+                .build();
         return partidaRepository.saveAndFlush(partida);
     }
 
@@ -32,7 +39,8 @@ public class PartidaService {
         );
     }
 
-    public void atualizarPartidaPorId(Integer id, Partida partida) {
+    @Transactional
+    public void atualizarPartidaPorId(Integer id, PartidaDto partida) {
         Partida partidaEntity = partidaRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Partida não encontrada")
         );
