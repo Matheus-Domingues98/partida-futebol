@@ -16,6 +16,8 @@ public interface ClubeRepository extends JpaRepository<Clube, Integer> {
 
     List<Clube> findByAtivoTrue();
     List<Clube> findByAtivoFalse();
+    List<Clube> findByUf(String uf);
+    List<Clube> findByNomeContainingIgnoreCase(String nome);
 
     Optional<Clube> findByNomeAndAtivoTrue(String nome);
 }

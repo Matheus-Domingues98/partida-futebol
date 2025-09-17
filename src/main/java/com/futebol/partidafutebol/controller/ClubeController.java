@@ -18,8 +18,11 @@ public class ClubeController {
     private final ClubeService clubeService;
 
     @GetMapping
-    public ResponseEntity<List<Clube>> listarTodosClubes() {
-        List<Clube> clubes = clubeService.listarTodosClubes();
+    public ResponseEntity<List<Clube>> listarTodosClubes(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String uf,
+            @RequestParam(required = false) Boolean ativo) {
+        List<Clube> clubes = clubeService.listarClubesComFiltros(nome, uf, ativo);
         return ResponseEntity.ok(clubes);
     }
 
@@ -29,15 +32,15 @@ public class ClubeController {
         return ResponseEntity.ok(clubeSalvo);
     }
 
-    @GetMapping("/{nome}")
-    public ResponseEntity<Clube> buscarClubePorNome(@PathVariable String nome) {
-        return ResponseEntity.ok(clubeService.buscarClubePorNome(nome));
+    @GetMapping("/{id}")
+    public ResponseEntity<Clube> buscarClubePorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(clubeService.buscarClubePorId(id));
     }
 
-    @DeleteMapping("/{nome}")
-    public ResponseEntity<Void> deletarClubePorNome(@PathVariable String nome) {
-        clubeService.deletarClubePorNome(nome);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{id}/inativar")
+    public ResponseEntity<Clube> deletarClubePorId(@PathVariable Integer id) {
+        Clube clubeInativado = clubeService.inativarClubePorId(id);
+        return ResponseEntity.ok(clubeInativado);
     }
 
     @PutMapping("/{id}")
@@ -46,7 +49,7 @@ public class ClubeController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}/inativar")
+    /*@PutMapping("/{id}/inativar")
     public ResponseEntity<Clube> inativarClubePorId(@PathVariable Integer id) {
         Clube clubeInativado = clubeService.inativarClubePorId(id);
         return ResponseEntity.ok(clubeInativado);
@@ -57,4 +60,7 @@ public class ClubeController {
         Clube clubeAtivado = clubeService.ativarClubePorId(id);
         return  ResponseEntity.ok(clubeAtivado);
     }
+
+     */
+
 }

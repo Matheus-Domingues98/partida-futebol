@@ -4,7 +4,9 @@ import lombok.*;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Entity
 @Table(name = "clube")
@@ -14,6 +16,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class Clube {
+
+    public static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,8 +30,19 @@ public class Clube {
     private String uf;
     
     @Column(name = "dataCriacao")
-    private Date dataCriacao;
+    private LocalDateTime dataCriacao;
 
     @Column(name = "status")
     private boolean ativo;
+
+    @Override
+    public String toString() {
+        return "Clube{" +
+                "ativo=" + ativo +
+                ", id=" + id +
+                ", nome='" + nome + '\'' +
+                ", uf='" + uf + '\'' +
+                ", dataCriacao=" + (dataCriacao != null ? dtf.format(dataCriacao) : "null") +
+                '}';
+    }
 }
