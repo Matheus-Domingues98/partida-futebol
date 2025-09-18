@@ -1,48 +1,26 @@
 package com.futebol.partidafutebol.dto;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.futebol.partidafutebol.infrastructure.entitys.aux.UF;
+import lombok.Builder;
 
-import java.time.LocalDateTime;
-
-import static com.futebol.partidafutebol.infrastructure.entitys.Clube.dtf;
-
+import java.time.LocalDate;
+@Builder
 public class ClubeDto {
 
     private String nome;
-    private String uf;
-    private LocalDateTime dataCriacao;
+    private UF uf;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dataCriacao;
     private boolean ativo;
 
-    public ClubeDto() {
+    public ClubeDto(String nome, UF uf, LocalDate dataCriacao, boolean ativo) {
     }
 
-    public ClubeDto(String nome, String uf, LocalDateTime dataCriacao, boolean ativo) {
-        this.nome = nome;
-        this.uf = uf;
-        this.dataCriacao = dataCriacao;
+    public ClubeDto(boolean ativo, LocalDate dataCriacao, String nome, UF uf) {
         this.ativo = ativo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getUf() {
-        return uf;
-    }
-
-    public void setUf(String uf) {
-        this.uf = uf;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+        this.nome = nome;
+        this.uf = uf;
     }
 
     public boolean isAtivo() {
@@ -53,13 +31,27 @@ public class ClubeDto {
         this.ativo = ativo;
     }
 
-    @Override
-    public String toString() {
-        return "ClubeDto{" +
-                "ativo=" + ativo +
-                ", nome='" + nome + '\'' +
-                ", uf='" + uf + '\'' +
-                ", dataCriacao=" + dtf.format(dataCriacao) +
-                '}';
+    public LocalDate getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDate dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public UF getUf() {
+        return uf;
+    }
+
+    public void setUf(UF uf) {
+        this.uf = uf;
     }
 }

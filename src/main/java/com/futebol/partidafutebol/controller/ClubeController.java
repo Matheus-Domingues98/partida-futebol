@@ -1,13 +1,13 @@
 package com.futebol.partidafutebol.controller;
-
 import com.futebol.partidafutebol.business.ClubeService;
 import com.futebol.partidafutebol.dto.ClubeDto;
-import com.futebol.partidafutebol.infrastructure.entitys.Clube;
+
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -17,50 +17,37 @@ public class ClubeController {
 
     private final ClubeService clubeService;
 
-    @GetMapping
-    public ResponseEntity<List<Clube>> listarTodosClubes(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String uf,
-            @RequestParam(required = false) Boolean ativo) {
-        List<Clube> clubes = clubeService.listarClubesComFiltros(nome, uf, ativo);
-        return ResponseEntity.ok(clubes);
-    }
-
+    // 1. Cadastrar um clube:
     @PostMapping
-    public ResponseEntity<Clube> salvarClube(@RequestBody Clube clube) {
-        Clube clubeSalvo = clubeService.salvarClube(clube);
+    public ResponseEntity<ClubeDto> salvarClube(@RequestBody ClubeDto clubeDto) {
+        ClubeDto clubeSalvo = clubeService.cadastrarClube(clubeDto);
         return ResponseEntity.ok(clubeSalvo);
     }
-
+    // 2. Editar um clube:
+    @PutMapping("/{id}")
+    public ResponseEntity<ClubeDto> editarClube(@RequestBody ClubeDto clubeDto, @PathVariable Integer id) {
+        ClubeDto clubeEditado = clubeService.editarClube(clubeDto, id);
+        return ResponseEntity.ok(clubeEditado);
+    }
+    // 3. Inativar um clube:
+    @DeleteMapping("/{id}/inativar")
+    public ResponseEntity<ClubeDto> inativarClubePorId(@PathVariable Integer id) {
+        ClubeDto clubeInativado = clubeService.inativarClubePorId(id);
+        return ResponseEntity.ok(clubeInativado);
+    }
+    // 4. Buscar clube por Id:
     @GetMapping("/{id}")
-    public ResponseEntity<Clube> buscarClubePorId(@PathVariable Integer id) {
+    public ResponseEntity<ClubeDto> buscarClubePorId(@PathVariable Integer id) {
         return ResponseEntity.ok(clubeService.buscarClubePorId(id));
     }
-
-    @DeleteMapping("/{id}/inativar")
-    public ResponseEntity<Clube> deletarClubePorId(@PathVariable Integer id) {
-        Clube clubeInativado = clubeService.inativarClubePorId(id);
-        return ResponseEntity.ok(clubeInativado);
+    // 5. Listar todos os clubes:
+    @GetMapping
+    public ResponseEntity<List<ClubeDto>> listarTodosClubes(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String uf,
+            @RequestParam(required = false) LocalDate dataCriacao,
+            @RequestParam(required = false) Boolean ativo) {
+        List<ClubeDto> clubesListados = clubeService.listarTodosClubes(nome, uf, dataCriacao, ativo);
+        return ResponseEntity.ok(clubesListados);
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizarClubePorId(@PathVariable Integer id, @RequestBody ClubeDto clubeDto) {
-        clubeService.atualizarClubePorId(id, clubeDto);
-        return ResponseEntity.ok().build();
-    }
-
-    /*@PutMapping("/{id}/inativar")
-    public ResponseEntity<Clube> inativarClubePorId(@PathVariable Integer id) {
-        Clube clubeInativado = clubeService.inativarClubePorId(id);
-        return ResponseEntity.ok(clubeInativado);
-    }
-
-    @PutMapping("/{id}/ativar")
-    public ResponseEntity<Clube> ativarClubePorId(@PathVariable Integer id) {
-        Clube clubeAtivado = clubeService.ativarClubePorId(id);
-        return  ResponseEntity.ok(clubeAtivado);
-    }
-
-     */
-
 }

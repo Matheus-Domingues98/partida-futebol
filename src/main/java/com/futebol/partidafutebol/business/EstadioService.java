@@ -15,10 +15,7 @@ import java.util.List;
 public class EstadioService {
     private final EstadioRepository estadioRepository;
 
-    public Estadio salvarEstadio(EstadioDto estadioDto) {
-        Estadio estadio = Estadio.builder()
-                .nome(estadioDto.getNome())
-                .build();
+    public Estadio salvarEstadio(Estadio estadio) {
         return estadioRepository.saveAndFlush(estadio);
     }
 
@@ -26,12 +23,8 @@ public class EstadioService {
         return estadioRepository.findAll();
     }
 
-    public void deletarEstadioPorNome(String nome) {
-        estadioRepository.deleteByNome(nome);
-    }
-
-    public Estadio buscarEstadioPorNome(String nome) {
-        return estadioRepository.findByNome(nome).orElseThrow(
+    public Estadio buscarEstadioPorId(Integer id) {
+        return estadioRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Estadio nao encontrado")
         );
     }
@@ -46,5 +39,14 @@ public class EstadioService {
                 .build();
 
         estadioRepository.saveAndFlush(estadioAtualizado);
+    }
+
+    public List<Estadio> listarEstadiosComFiltros(String nome) {
+        // Se nenhum filtro foi fornecido, retorna todos
+        if (nome == null) {
+            return estadioRepository.findAll();
+        } else {
+            return estadioRepository.findByNomeContainingIgnoreCase(nome);
+        }
     }
 }

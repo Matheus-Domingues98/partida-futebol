@@ -3,6 +3,8 @@ package com.futebol.partidafutebol.infrastructure.entitys;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Entity
@@ -32,8 +34,9 @@ public class Partida {
     private Estadio estadioPartida;
 
     @Column(name = "data_hora")
-    private Date dataHora;
+    private LocalDateTime dataHora;
 
     @Column(name = "resultado")
     private String resultado;
+
 }

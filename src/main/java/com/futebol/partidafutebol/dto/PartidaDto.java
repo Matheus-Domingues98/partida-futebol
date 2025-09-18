@@ -2,21 +2,20 @@ package com.futebol.partidafutebol.dto;
 
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
-
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class PartidaDto {
 
     private Clube clubeMandante;
     private Clube clubeVisitante;
     private Estadio estadioPartida;
-    private Date dataHora;
+    private LocalDateTime dataHora;
     private String resultado;
 
     public PartidaDto() {
     }
 
-    public PartidaDto(Clube clubeMandante, Clube clubeVisitante, Date dataHora, Estadio estadioPartida, String resultado) {
+    public PartidaDto(Clube clubeMandante, Clube clubeVisitante, LocalDateTime dataHora, Estadio estadioPartida, String resultado) {
         this.clubeMandante = clubeMandante;
         this.clubeVisitante = clubeVisitante;
         this.dataHora = dataHora;
@@ -40,11 +39,11 @@ public class PartidaDto {
         this.clubeVisitante = clubeVisitante;
     }
 
-    public Date getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(Date dataHora) {
+    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
 

@@ -1,7 +1,11 @@
 package com.futebol.partidafutebol.business;
 
 import com.futebol.partidafutebol.dto.PartidaDto;
+import com.futebol.partidafutebol.infrastructure.entitys.Clube;
+import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import com.futebol.partidafutebol.infrastructure.entitys.Partida;
+import com.futebol.partidafutebol.infrastructure.repository.ClubeRepository;
+import com.futebol.partidafutebol.infrastructure.repository.EstadioRepository;
 import com.futebol.partidafutebol.infrastructure.repository.PartidaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,15 +17,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PartidaService {
     private final PartidaRepository partidaRepository;
+    private final ClubeRepository clubeRepository;
+    private final EstadioRepository estadioRepository;
 
-    public Partida salvarPartida(PartidaDto partidaDto) {
+    public Partida salvarPartida(Partida partida) {
+        return partidaRepository.saveAndFlush(partida);
+    }
+
+    public Partida salvarPartidaPorNomes(PartidaCadastroDto partidaDto) {
+        // Busca clube mandante por nome
+        Clube clubeMandante = clubeRepository.findByNome(partidaDto.getClubeMandanteNome())
+                .orElseThrow(() -> new RuntimeException("Clube mandante não encontrado: " + partidaDto.getClubeMandanteNome()));
+        
+        // Busca clube visitante por nome
+        Clube clubeVisitante = clubeRepository.findByNome(partidaDto.getClubeVisitanteNome())
+                .orElseThrow(() -> new RuntimeException("Clube visitante não encontrado: " + partidaDto.getClubeVisitanteNome()));
+        
+        // Busca estádio por nome
+        Estadio estadio = estadioRepository.findByNome(partidaDto.getEstadioNome())
+                .orElseThrow(() -> new RuntimeException("Estádio não encontrado: " + partidaDto.getEstadioNome()));
+        
+        // Validação: clubes devem ser diferentes
+        if (clubeMandante.equals(clubeVisitante)) {
+            throw new IllegalArgumentException("Clubes devem ser diferentes");
+        }
+        
+        // Cria a partida
         Partida partida = Partida.builder()
-                .clubeMandante(partidaDto.getClubeMandante())
-                .clubeVisitante(partidaDto.getClubeVisitante())
-                .estadioPartida(partidaDto.getEstadioPartida())
+                .clubeMandante(clubeMandante)
+                .clubeVisitante(clubeVisitante)
+                .estadioPartida(estadio)
                 .dataHora(partidaDto.getDataHora())
                 .resultado(partidaDto.getResultado())
                 .build();
+        
         return partidaRepository.saveAndFlush(partida);
     }
 

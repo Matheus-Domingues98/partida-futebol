@@ -1,12 +1,9 @@
 package com.futebol.partidafutebol.infrastructure.entitys;
 
+import com.futebol.partidafutebol.infrastructure.entitys.aux.UF;
 import lombok.*;
-
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "clube")
@@ -16,8 +13,6 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 @Builder
 public class Clube {
-
-    public static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,22 +22,12 @@ public class Clube {
     private String nome;
     
     @Column(name = "UF")
-    private String uf;
+    @Enumerated(EnumType.STRING)
+    private UF uf;
     
     @Column(name = "dataCriacao")
-    private LocalDateTime dataCriacao;
+    private LocalDate dataCriacao;
 
     @Column(name = "status")
     private boolean ativo;
-
-    @Override
-    public String toString() {
-        return "Clube{" +
-                "ativo=" + ativo +
-                ", id=" + id +
-                ", nome='" + nome + '\'' +
-                ", uf='" + uf + '\'' +
-                ", dataCriacao=" + (dataCriacao != null ? dtf.format(dataCriacao) : "null") +
-                '}';
-    }
 }

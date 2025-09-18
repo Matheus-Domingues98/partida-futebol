@@ -24,12 +24,23 @@ public class PartidaController {
     }
 
     @PostMapping
-    public ResponseEntity<Partida> salvarPartida(@RequestBody PartidaDto partida) {
+    public ResponseEntity<Partida> salvarPartida(@RequestBody Partida partida) {
+        // Validação ANTES de salvar
         if (partida.getClubeMandante().equals(partida.getClubeVisitante())) {
-            throw  new IllegalArgumentException("Clubes devem ser diferentes");
+            throw new IllegalArgumentException("Clubes devem ser diferentes");
         }
-        return  ResponseEntity.ok(partidaService.salvarPartida(partida));
+        
+        Partida partidaSalva = partidaService.salvarPartida(partida);
+        return ResponseEntity.ok(partidaSalva);
     }
+
+    @PostMapping("/cadastro")
+    public ResponseEntity<Partida> salvarPartidaPorNomes(@RequestBody PartidaCadastroDto partidaDto) {
+        Partida partidaSalva = partidaService.salvarPartidaPorNomes(partidaDto);
+        return ResponseEntity.ok(partidaSalva);
+    }
+
+   
 
     @GetMapping("/{id}")
     public ResponseEntity<Partida> buscarPartidaPorId(@PathVariable Integer id) {

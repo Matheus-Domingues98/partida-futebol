@@ -24,25 +24,26 @@ public class EstadioController {
     }
 
     @PostMapping
-    public ResponseEntity<Estadio> salvarEstadio(@RequestBody EstadioDto estadio) {
+    public ResponseEntity<Estadio> salvarEstadio(@RequestBody Estadio estadio) {
         Estadio estadioSalvo = estadioService.salvarEstadio(estadio);
         return ResponseEntity.ok(estadioSalvo);
     }
 
-    @GetMapping("/{nome}")
-    public ResponseEntity<Estadio> buscarEstadioPorNome(@PathVariable String nome) {
-        return ResponseEntity.ok(estadioService.buscarEstadioPorNome(nome));
-    }
-
-    @DeleteMapping("/{nome}")
-    public ResponseEntity<Void> deletarEstadioPorNome(@PathVariable String nome) {
-        estadioService.deletarEstadioPorNome(nome);
-        return ResponseEntity.ok().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Estadio> buscarEstadioPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(estadioService.buscarEstadioPorId(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizarEstadioPorId(@PathVariable Integer id, @RequestBody EstadioDto estadio) {
         estadioService.atualizarEstadioPorId(id, estadio);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/filtros")
+    public ResponseEntity<List<Estadio>> listarEstadiosComFiltros(
+            @RequestParam(required = false) String nome){
+        List<Estadio> estadios = estadioService.listarEstadiosComFiltros(nome);
+        return ResponseEntity.ok(estadios);
     }
 }
