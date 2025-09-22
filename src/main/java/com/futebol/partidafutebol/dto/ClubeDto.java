@@ -9,18 +9,15 @@ public class ClubeDto {
 
     private String nome;
     private UF uf;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataCriacao;
     private boolean ativo;
 
     public ClubeDto(String nome, UF uf, LocalDate dataCriacao, boolean ativo) {
-    }
-
-    public ClubeDto(boolean ativo, LocalDate dataCriacao, String nome, UF uf) {
-        this.ativo = ativo;
-        this.dataCriacao = dataCriacao;
         this.nome = nome;
         this.uf = uf;
+        this.dataCriacao = dataCriacao; 
+        this.ativo = ativo;
     }
 
     public boolean isAtivo() {

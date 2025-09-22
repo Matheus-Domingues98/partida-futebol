@@ -1,42 +1,42 @@
 package com.futebol.partidafutebol.dto;
 
-import com.futebol.partidafutebol.infrastructure.entitys.Clube;
-import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 public class PartidaDto {
 
-    private Clube clubeMandante;
-    private Clube clubeVisitante;
-    private Estadio estadioPartida;
+    private Integer clubeMandanteId;
+    private Integer clubeVisitanteId;
+    private Integer estadioPartidaId;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHora;
     private String resultado;
 
     public PartidaDto() {
     }
 
-    public PartidaDto(Clube clubeMandante, Clube clubeVisitante, LocalDateTime dataHora, Estadio estadioPartida, String resultado) {
-        this.clubeMandante = clubeMandante;
-        this.clubeVisitante = clubeVisitante;
+    public PartidaDto(Integer clubeMandanteId, Integer clubeVisitanteId, LocalDateTime dataHora, Integer estadioPartidaId, String resultado) {
+        this.clubeMandanteId = clubeMandanteId;
+        this.clubeVisitanteId = clubeVisitanteId;
         this.dataHora = dataHora;
-        this.estadioPartida = estadioPartida;
+        this.estadioPartidaId = estadioPartidaId;
         this.resultado = resultado;
     }
 
-    public Clube getClubeMandante() {
-        return clubeMandante;
+    public Integer getClubeMandanteId() {
+        return clubeMandanteId;
     }
 
-    public void setClubeMandante(Clube clubeMandante) {
-        this.clubeMandante = clubeMandante;
+    public void setClubeMandanteId(Integer clubeMandanteId) {
+        this.clubeMandanteId = clubeMandanteId;
     }
 
-    public Clube getClubeVisitante() {
-        return clubeVisitante;
+    public Integer getClubeVisitanteId() {
+        return clubeVisitanteId;
     }
 
-    public void setClubeVisitante(Clube clubeVisitante) {
-        this.clubeVisitante = clubeVisitante;
+    public void setClubeVisitanteId(Integer clubeVisitanteId) {
+        this.clubeVisitanteId = clubeVisitanteId;
     }
 
     public LocalDateTime getDataHora() {
@@ -47,12 +47,12 @@ public class PartidaDto {
         this.dataHora = dataHora;
     }
 
-    public Estadio getEstadioPartida() {
-        return estadioPartida;
+    public Integer getEstadioPartidaId() {
+        return estadioPartidaId;
     }
 
-    public void setEstadioPartida(Estadio estadioPartida) {
-        this.estadioPartida = estadioPartida;
+    public void setEstadioPartidaId(Integer estadioPartidaId) {
+        this.estadioPartidaId = estadioPartidaId;
     }
 
     public String getResultado() {

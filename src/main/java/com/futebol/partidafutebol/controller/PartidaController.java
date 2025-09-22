@@ -2,11 +2,13 @@ package com.futebol.partidafutebol.controller;
 
 import com.futebol.partidafutebol.business.PartidaService;
 import com.futebol.partidafutebol.dto.PartidaDto;
-import com.futebol.partidafutebol.infrastructure.entitys.Partida;
+import com.futebol.partidafutebol.infrastructure.entitys.Clube;
+import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,45 +19,43 @@ public class PartidaController {
 
     private final PartidaService partidaService;
 
-    @GetMapping
-    public ResponseEntity<List<Partida>> listarTodasPartidas() {
-        List<Partida> partidas = partidaService.listarTodasPartidas();
-        return ResponseEntity.ok(partidas);
-    }
-
+    // 1. Cadastrar partida
     @PostMapping
-    public ResponseEntity<Partida> salvarPartida(@RequestBody Partida partida) {
-        // Validação ANTES de salvar
-        if (partida.getClubeMandante().equals(partida.getClubeVisitante())) {
-            throw new IllegalArgumentException("Clubes devem ser diferentes");
-        }
-        
-        Partida partidaSalva = partidaService.salvarPartida(partida);
+    public ResponseEntity<PartidaDto> cadastrarPartida(@RequestBody PartidaDto partidaDto) {
+        PartidaDto partidaSalva = partidaService.cadastrarPartida(partidaDto);
         return ResponseEntity.ok(partidaSalva);
     }
 
-    @PostMapping("/cadastro")
-    public ResponseEntity<Partida> salvarPartidaPorNomes(@RequestBody PartidaCadastroDto partidaDto) {
-        Partida partidaSalva = partidaService.salvarPartidaPorNomes(partidaDto);
-        return ResponseEntity.ok(partidaSalva);
-    }
-
-   
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Partida> buscarPartidaPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(partidaService.buscarPartidaPorId(id));
-    }
-
-    @DeleteMapping("/{id}")
-    public  ResponseEntity<Partida> deletarPartidaPorId(@PathVariable Integer id) {
-        partidaService.deletarPartidaPorId(id);
-        return ResponseEntity.ok().build();
-    }
-
+    //2 . Editar partida
     @PutMapping("/{id}")
-    public ResponseEntity<Partida> atualizarPartidaPorId(@PathVariable Integer id, @RequestBody PartidaDto partida) {
-        partidaService.atualizarPartidaPorId(id, partida);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PartidaDto> editarPartida(@RequestBody PartidaDto partidaDto, @PathVariable Integer id) {
+        PartidaDto partidaEditada = partidaService.editarPartida(partidaDto, id);
+        return ResponseEntity.ok(partidaEditada);
+    }
+
+    // 3. Remover partida
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PartidaDto> excluirPartida(@PathVariable Integer id) {
+        PartidaDto partidaExcluida = partidaService.excluirPartida(id);
+        return ResponseEntity.ok(partidaExcluida);
+    }
+
+    // 4. Buscar partida por id
+    @GetMapping("/{id}")
+    public ResponseEntity<PartidaDto> buscarPartidaPorId(@PathVariable Integer id) {
+        PartidaDto partidaDto = partidaService.buscarPartidaPorId(id);
+        return ResponseEntity.ok(partidaDto);
+    }
+
+    // 5. Listar todas as partidas
+    @GetMapping
+    public ResponseEntity<List<PartidaDto>> listarTodasPartidas(
+            @RequestParam(required = false) Integer clubeMandanteId,
+            @RequestParam(required = false) Integer clubeVisitanteId,
+            @RequestParam(required = false) Integer estadioPartidaId,
+            @RequestParam(required = false) LocalDateTime dataHora,
+            @RequestParam(required = false) String resultado) {
+        List<PartidaDto> partidasListadas = partidaService.listarTodasPartidas(clubeMandanteId, clubeVisitanteId, estadioPartidaId, dataHora, resultado);
+        return ResponseEntity.ok(partidasListadas);
     }
 }

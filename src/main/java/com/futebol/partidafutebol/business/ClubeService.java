@@ -6,6 +6,7 @@ import com.futebol.partidafutebol.infrastructure.repository.ClubeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,14 +22,10 @@ public class ClubeService {
     // 1. Cadastrar clube:
     @Transactional
     public ClubeDto cadastrarClube(ClubeDto clubeDto) {
-
         // I. Validar se clube já existe
-        // Correto:
-        Optional<Clube> clubeExistente = clubeRepository.findByNome(clubeDto.getNome());
-        if (clubeExistente.isPresent()) {
-            throw new RuntimeException("Clube já existe: " + clubeDto.getNome());
+        if (clubeRepository.existsByNome(clubeDto.getNome())) {
+            throw new IllegalArgumentException("Clube já existe");
         }
-
         // II. Converter DTO para Entity (usando Builder da Entity)
         Clube clube = Clube.builder()
                 .nome(clubeDto.getNome())
@@ -48,13 +45,12 @@ public class ClubeService {
                 clubeSalvo.isAtivo()
         );
     }
+
     // 2. Editar clube:
     @Transactional
     public ClubeDto editarClube(ClubeDto clubeDto, Integer id) {
-
         // I. Validar se clube existe
-        Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Clube nao encontrado"));
+        Clube clubeEntity = findById(id);
 
         // II. Atualizar dados do clube
         Clube clubeAtualizado = Clube.builder()
@@ -75,13 +71,12 @@ public class ClubeService {
                 clubeAtualizado.getDataCriacao(),
                 clubeAtualizado.isAtivo());
     }
+
     // 3. Inativar clube:
     @Transactional
-    public Clube inativarClubePorId(Integer id) {
+    public ClubeDto inativarClubePorId(Integer id) {
         // I. Validar se clube existe
-        Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Clube nao encontrado"));
-
+        Clube clubeEntity = findById(id);
         // II. Inativar clube
         clubeEntity.setAtivo(false);
 
@@ -97,8 +92,8 @@ public class ClubeService {
     }
     // 4. Buscar clube por ID:
     public ClubeDto buscarClubePorId(Integer id) {
-        Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Clube nao encontrado"));
+        // I. Validar se clube existe
+        Clube clubeEntity = findById(id);
 
         return new ClubeDto (
                 clubeEntity.getNome(),
@@ -121,7 +116,6 @@ public class ClubeService {
                 return List.of();
             }
         }
-        
         // Estratégia: Usar métodos combinados do Repository para máxima eficiência
         if (nome != null && ufEnum != null && ativo != null) {
             // Filtro completo: nome + UF + ativo
@@ -148,7 +142,6 @@ public class ClubeService {
             // Sem filtros: todos os clubes
             clubes = clubeRepository.findAll();
         }
-        
         // Aplicar filtro de data em memória (não há método no Repository para isso)
         return clubes.stream()
                 .filter(clube -> dataCriacao == null || clube.getDataCriacao().equals(dataCriacao))
@@ -160,8 +153,11 @@ public class ClubeService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    // Metodo generico
+    public Clube findById(Integer id) {
+        Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Clube nao encontrado"));
+        return  clubeEntity;
+    }
 }
-
-
-
-

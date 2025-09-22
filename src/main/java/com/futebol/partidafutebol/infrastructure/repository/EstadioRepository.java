@@ -14,6 +14,7 @@ public interface EstadioRepository extends JpaRepository<Estadio, Integer> {
 
     List<Estadio> findByNomeContainingIgnoreCase(String nome);
 
+    boolean existsByNome(String nome);
 
     @Transactional
     void deleteByNome(String nome);

@@ -6,7 +6,6 @@ import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -17,33 +16,29 @@ public class EstadioController {
 
     private final EstadioService estadioService;
 
-    @GetMapping
-    public ResponseEntity<List<Estadio>> listarTodosEstadios() {
-        List<Estadio> estadios = estadioService.listarTodosEstadios();
-        return ResponseEntity.ok(estadios);
-    }
-
+    // 1. Cadastar estadio
     @PostMapping
-    public ResponseEntity<Estadio> salvarEstadio(@RequestBody Estadio estadio) {
-        Estadio estadioSalvo = estadioService.salvarEstadio(estadio);
+    public ResponseEntity<EstadioDto> salvarEstadio(@RequestBody EstadioDto estadioDto) {
+        EstadioDto estadioSalvo = estadioService.cadastrarEstadio(estadioDto);
         return ResponseEntity.ok(estadioSalvo);
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Estadio> buscarEstadioPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(estadioService.buscarEstadioPorId(id));
-    }
-
+    // 2. Editar estadio
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizarEstadioPorId(@PathVariable Integer id, @RequestBody EstadioDto estadio) {
-        estadioService.atualizarEstadioPorId(id, estadio);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<EstadioDto> editarEstadio(@RequestBody EstadioDto estadioDto, @PathVariable Integer id) {
+        EstadioDto estadioEditado = estadioService.editarEstadio(estadioDto, id);
+        return ResponseEntity.ok(estadioEditado);
     }
-
-    @GetMapping("/filtros")
-    public ResponseEntity<List<Estadio>> listarEstadiosComFiltros(
+    // 3. Buscar estadio por id
+    @GetMapping("/{id}")
+    public ResponseEntity<EstadioDto> buscarEstadioPorId(@PathVariable Integer id) {
+        EstadioDto estadioDto = estadioService.buscarEstadioPorId(id);
+        return ResponseEntity.ok(estadioDto);
+    }
+    // 4. Listar Estadio
+    @GetMapping
+    public ResponseEntity<List<EstadioDto>> listarTodosEstadios(
             @RequestParam(required = false) String nome){
-        List<Estadio> estadios = estadioService.listarEstadiosComFiltros(nome);
-        return ResponseEntity.ok(estadios);
+        List<EstadioDto> estadiosListados = estadioService.listarTodosEstadios(nome);
+        return ResponseEntity.ok(estadiosListados);
     }
 }
