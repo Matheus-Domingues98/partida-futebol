@@ -1,12 +1,16 @@
 package com.futebol.partidafutebol.business;
 
 import com.futebol.partidafutebol.dto.EstadioDto;
+import com.futebol.partidafutebol.exception.DadosInvalidosExcepcion;
 import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import com.futebol.partidafutebol.infrastructure.repository.EstadioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +28,8 @@ public class EstadioService {
         if (estadioRepository.existsByNome(estadioDto.getNome())) {
             throw new IllegalArgumentException("Estadio ja existe");
         }
+        // II. Validar dados do estadio
+        validarEstadio(estadioDto);
 
         // II. Converter DTO da Entity (usando Builder da Entity)
         Estadio estadio = Estadio.builder().nome(estadioDto.getNome()).build();
@@ -37,6 +43,9 @@ public class EstadioService {
     // 2. Editar estadio
     @Transactional
     public EstadioDto editarEstadio(EstadioDto estadioDto, Integer id) {
+
+        // I. Validar dados do estadio
+        validarEstadio(estadioDto);
 
         // I. Validar se o estadio existe
         Estadio estadioExistente = findById(id);
@@ -79,5 +88,19 @@ public class EstadioService {
         Estadio estadioEntity = estadioRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Estadio nao encontrado"));
         return estadioEntity;
+
+    }
+
+    public EstadioDto validarEstadio(EstadioDto estadioDto) {
+
+        // Validar nome
+        if (estadioDto.getNome() == null || estadioDto.getNome().trim().isEmpty()) {
+            throw new DadosInvalidosExcepcion("Nome do estadio inválido");
+        }
+        // Validar tamanho mínimo do nome
+        if (estadioDto.getNome().trim().length() < 3) {
+            throw new DadosInvalidosExcepcion("Nome do estadio deve ter pelo menos 3 caracteres");
+        }
+        return estadioDto;
     }
 }

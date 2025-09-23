@@ -1,16 +1,15 @@
 package com.futebol.partidafutebol.business;
 import com.futebol.partidafutebol.dto.ClubeDto;
+import com.futebol.partidafutebol.exception.DadosInvalidosExcepcion;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.entitys.aux.UF;
 import com.futebol.partidafutebol.infrastructure.repository.ClubeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,10 +21,9 @@ public class ClubeService {
     // 1. Cadastrar clube:
     @Transactional
     public ClubeDto cadastrarClube(ClubeDto clubeDto) {
-        // I. Validar se clube já existe
-        if (clubeRepository.existsByNome(clubeDto.getNome())) {
-            throw new IllegalArgumentException("Clube já existe");
-        }
+        // I. Validar dados do clube
+        validacaoClube(clubeDto);
+
         // II. Converter DTO para Entity (usando Builder da Entity)
         Clube clube = Clube.builder()
                 .nome(clubeDto.getNome())
@@ -51,6 +49,8 @@ public class ClubeService {
     public ClubeDto editarClube(ClubeDto clubeDto, Integer id) {
         // I. Validar se clube existe
         Clube clubeEntity = findById(id);
+        // II. Validar dados do clube
+        validacaoClube(clubeDto);
 
         // II. Atualizar dados do clube
         Clube clubeAtualizado = Clube.builder()
@@ -104,6 +104,7 @@ public class ClubeService {
     }
     // 5. Listar todos os clubes com filtros otimizados:
     public List<ClubeDto> listarTodosClubes(String nome, String uf, LocalDate dataCriacao, Boolean ativo) {
+
         List<Clube> clubes;
         
         // Converter UF string para enum se fornecido
@@ -159,5 +160,30 @@ public class ClubeService {
         Clube clubeEntity = clubeRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Clube nao encontrado"));
         return  clubeEntity;
+        //throw new AlgumaException("Clube nao encontrado");
+    }
+
+    public ClubeDto validacaoClube(ClubeDto clubeDto) {
+        // Validar data de criação
+        if(clubeDto.getDataCriacao() != null && clubeDto.getDataCriacao().isAfter(LocalDate.now())) {
+            throw new DadosInvalidosExcepcion("A data de criação do clube não pode ser no futuro");
+        }
+        // Validar nome
+        if (clubeDto.getNome() == null || clubeDto.getNome().trim().isEmpty()) {
+            throw new DadosInvalidosExcepcion("Nome do clube é obrigatório");
+        }
+        // Validar tamanho mínimo do nome
+        if (clubeDto.getNome().trim().length() < 3) {
+            throw new DadosInvalidosExcepcion("Nome do clube deve ter pelo menos 3 caracteres");
+        }
+        // Validar UF
+        if (clubeDto.getUf() == null) {
+            throw new DadosInvalidosExcepcion("UF é obrigatória");
+        }
+        // I. Validar se clube já existe
+        if (clubeRepository.existsByNome(clubeDto.getNome())) {
+            throw new IllegalArgumentException("Clube já existe");
+        }
+        return clubeDto;
     }
 }
