@@ -31,13 +31,13 @@ public class EstadioService {
         // II. Validar dados do estadio
         validarEstadio(estadioDto);
 
-        // II. Converter DTO da Entity (usando Builder da Entity)
+        // III. Converter DTO da Entity (usando Builder da Entity)
         Estadio estadio = Estadio.builder().nome(estadioDto.getNome()).build();
 
-        // III. Salvar no banco de dados
+        // IV. Salvar no banco de dados
         Estadio estadioSalvo = estadioRepository.save(estadio);
 
-        // IV. Retornar DTO com dados salvos
+        // V. Retornar DTO com dados salvos
         return new EstadioDto(estadioSalvo.getNome());
     }
     // 2. Editar estadio
@@ -47,19 +47,19 @@ public class EstadioService {
         // I. Validar dados do estadio
         validarEstadio(estadioDto);
 
-        // I. Validar se o estadio existe
+        // II. Validar se o estadio existe
         Estadio estadioExistente = findById(id);
 
-        // II. Converter DTO da Entity (usando Builder da Entity)
+        // III. Converter DTO da Entity (usando Builder da Entity)
         Estadio estadioAtualizado = Estadio.builder()
                 .id(estadioExistente.getId())
                 .nome(estadioDto.getNome() != null ? estadioDto.getNome() : estadioExistente.getNome())
                 .build();
 
-        // III. Salvar no banco de dados
+        // IV. Salvar no banco de dados
         Estadio estadioSalvo = estadioRepository.save(estadioAtualizado);
 
-        // IV. Retornar DTO com dados salvos
+        // V. Retornar DTO com dados salvos
         return new EstadioDto(estadioSalvo.getNome());
     }
     // 3. Buscar um estadio
@@ -85,22 +85,21 @@ public class EstadioService {
     }
     // Metodo generico
     public Estadio findById(Integer id) {
-        Estadio estadioEntity = estadioRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Estadio nao encontrado"));
-        return estadioEntity;
-
+        return estadioRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estadio não encontrado"));
     }
 
     public EstadioDto validarEstadio(EstadioDto estadioDto) {
 
-        // Validar nome
-        if (estadioDto.getNome() == null || estadioDto.getNome().trim().isEmpty()) {
-            throw new DadosInvalidosExcepcion("Nome do estadio inválido");
+        // validar dados minimos mencionados
+        if (estadioDto.getNome() == null || estadioDto.getNome().trim().isEmpty() || estadioDto.getNome().trim().length() < 3) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Todos os dados devem ser preenchidos");
         }
-        // Validar tamanho mínimo do nome
-        if (estadioDto.getNome().trim().length() < 3) {
-            throw new DadosInvalidosExcepcion("Nome do estadio deve ter pelo menos 3 caracteres");
+
+        if (estadioRepository.existsByNome(estadioDto.getNome())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Estadio ja existe");
         }
+
         return estadioDto;
     }
 }

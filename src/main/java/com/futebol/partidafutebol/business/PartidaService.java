@@ -1,17 +1,24 @@
 package com.futebol.partidafutebol.business;
 
+import com.futebol.partidafutebol.dto.ClubeDto;
 import com.futebol.partidafutebol.dto.PartidaDto;
+import com.futebol.partidafutebol.exception.DadosInvalidosExcepcion;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import com.futebol.partidafutebol.infrastructure.entitys.Partida;
 import com.futebol.partidafutebol.infrastructure.repository.PartidaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +31,11 @@ public class PartidaService {
     // 1. Cadastra uma partida
     @Transactional
     public PartidaDto cadastrarPartida(PartidaDto partidaDto) {
-        // I. Validação clubes devem ser diferentes
-        if (partidaDto.getClubeMandanteId().equals(partidaDto.getClubeVisitanteId())) {
-            throw new IllegalArgumentException("Clubes mandante e visitante devem ser diferentes");
-        }
-        // II. Criar a partida
+
+        // I. Validar dados da partida
+        validarPartida(partidaDto);
+
+        // III. Criar a partida
         Partida partida = Partida.builder()
                 .clubeMandante(clubeService.findById(partidaDto.getClubeMandanteId()))
                 .clubeVisitante(clubeService.findById(partidaDto.getClubeVisitanteId()))
@@ -36,9 +43,9 @@ public class PartidaService {
                 .dataHora(partidaDto.getDataHora())
                 .resultado(partidaDto.getResultado())
                 .build();
-        // III. Salvar no banco
+        // IV. Salvar no banco
         Partida partidaSalva = partidaRepository.save(partida);
-        // IV. Retornar DTO com dados salvos
+        // V. Retornar DTO com dados salvos
         return new PartidaDto(
                 partidaSalva.getClubeMandante().getId(),
                 partidaSalva.getClubeVisitante().getId(),
@@ -52,7 +59,9 @@ public class PartidaService {
     public PartidaDto editarPartida(PartidaDto partidaDto, Integer id) {
         // I. Validar se partida existe
         Partida partidaEntity = findById(id);
-        // II. Atualizar os dados da partida
+        // II. Validar dados da partida
+        validarPartida(partidaDto);
+        // III. Atualizar os dados da partida
         Partida partidaAtualizada = Partida.builder()
                 .id(partidaEntity.getId())
                 .clubeMandante(partidaDto.getClubeMandanteId() != null ? clubeService.findById(partidaDto.getClubeMandanteId()) : partidaEntity.getClubeMandante())
@@ -62,10 +71,10 @@ public class PartidaService {
                 .resultado(partidaDto.getResultado() != null ? partidaDto.getResultado() : partidaEntity.getResultado())
                 .build();
 
-        // III. Salvar no banco
+        // IV. Salvar no banco
         Partida partidaSalva = partidaRepository.save(partidaAtualizada);
 
-        // IV. Retornar DTO
+        // V. Retornar DTO
         return new PartidaDto(
                 partidaSalva.getClubeMandante().getId(),
                 partidaSalva.getClubeVisitante().getId(),
@@ -133,11 +142,66 @@ public class PartidaService {
         );
     }
 
-    // Método genérico para buscar por ID
+    // Método para buscar por ID
     public Partida findById(Integer id) {
-        Partida partidaEntity = partidaRepository.findById(id).orElseThrow(
-                ()  -> new RuntimeException("Partida inexistente"));
-        return partidaEntity;
+        return partidaRepository.findById(id).orElseThrow(
+                ()  -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Partida inexistente"));
+    }
+
+    public PartidaDto validarPartida(PartidaDto partidaDto) {
+        // validar dados minimos mencionados
+        if (partidaDto.getClubeMandanteId().equals(partidaDto.getClubeVisitanteId()) || partidaDto.getClubeMandanteId() == null || partidaDto.getClubeVisitanteId() == null
+        || partidaDto.getEstadioPartidaId() == null || partidaDto.getDataHora() == null || partidaDto.getResultado() == null ) {
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Partida inexistente");
+        }
+
+        // Validar se a data da partida é posterior à data de criação dos clubes
+        validarDataPartidaPosteriorCriacaoClubes(partidaDto);
+
+        // Validar se clube esta ativo
+        validarClubeAtivo(partidaDto);
+
+        // Partidas com horarios proximos
+        // Estadio ja possui jogo
+
+
+        return partidaDto;
+    }
+
+
+
+    // Valida se a data da partida é posterior à data de criação dos clubes envolvidos
+    private void validarDataPartidaPosteriorCriacaoClubes(PartidaDto partidaDto) {
+        // Buscar os clubes mandante e visitante
+        Clube clubeMandante = clubeService.findById(partidaDto.getClubeMandanteId());
+        Clube clubeVisitante = clubeService.findById(partidaDto.getClubeVisitanteId());
+        
+        // Converter LocalDateTime da partida para LocalDate para comparação
+        LocalDate dataPartida = partidaDto.getDataHora().toLocalDate();
+        
+        // Validar clube mandante
+        if (clubeMandante.getDataCriacao() != null && dataPartida.isBefore(clubeMandante.getDataCriacao())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A data da partida deve ser posterior à data de criação do clube mandante");
+        }
+        // Validar clube visitante
+        if (clubeVisitante.getDataCriacao() != null && dataPartida.isBefore(clubeVisitante.getDataCriacao())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A data da partida deve ser posterior à data de criação do clube visitante");
+        }
+    }
+
+    private void validarClubeAtivo(PartidaDto partidaDto) {
+        // Buscar os clubes mandante e visitante
+        Clube clubeMandante = clubeService.findById(partidaDto.getClubeMandanteId());
+        Clube clubeVisitante = clubeService.findById(partidaDto.getClubeVisitanteId());
+
+        // Validar clube mandante
+        if (!clubeMandante.isAtivo()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Clube mandante deve estar ativo");
+        }
+        // Validar clube visitante
+        if (!clubeVisitante.isAtivo()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Clube visitante deve estar ativo");
+        }
     }
 }
 

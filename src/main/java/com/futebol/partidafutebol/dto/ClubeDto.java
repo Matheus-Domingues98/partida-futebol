@@ -51,4 +51,6 @@ public class ClubeDto {
     public void setUf(UF uf) {
         this.uf = uf;
     }
+
+
 }
