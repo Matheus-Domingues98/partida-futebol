@@ -5,12 +5,13 @@ import com.futebol.partidafutebol.infrastructure.entitys.aux.UF;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 @Transactional
 public interface ClubeRepository extends JpaRepository<Clube, Integer> {
 
-    Optional<Clube> findByNome(String nome);
+    Collection<? extends Clube> findByNome(String nome);
 
     @Transactional
     void deleteByNome(String nome);
@@ -21,6 +22,7 @@ public interface ClubeRepository extends JpaRepository<Clube, Integer> {
     List<Clube> findByNomeContainingIgnoreCase(String nome);
 
     Optional<Clube> findByNomeAndAtivoTrue(String nome);
+    Optional<Clube> findByUfAndAtivoTrue(UF uf);
 
     boolean existsByNome(String nome);
     

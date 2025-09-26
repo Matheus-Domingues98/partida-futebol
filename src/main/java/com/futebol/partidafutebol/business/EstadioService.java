@@ -24,11 +24,7 @@ public class EstadioService {
     @Transactional
     public EstadioDto cadastrarEstadio(EstadioDto estadioDto) {
 
-        // I. Validar se o estadio ja existe
-        if (estadioRepository.existsByNome(estadioDto.getNome())) {
-            throw new IllegalArgumentException("Estadio ja existe");
-        }
-        // II. Validar dados do estadio
+        // I. Validar dados do estadio
         validarEstadio(estadioDto);
 
         // III. Converter DTO da Entity (usando Builder da Entity)

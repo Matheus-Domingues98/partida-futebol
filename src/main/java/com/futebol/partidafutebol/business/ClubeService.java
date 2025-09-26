@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,14 +26,13 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 public class ClubeService {
 
     private final ClubeRepository clubeRepository;
-    private final PartidaService partidaService;
     private final PartidaRepository partidaRepository;
 
     // 1. Cadastrar clube:
     @Transactional
     public ClubeDto cadastrarClube(ClubeDto clubeDto) {
         // I. Validar dados do clube
-        validarClube(clubeDto);
+        validarClube(clubeDto, null);
 
         // II. Converter DTO para Entity (usando Builder da Entity)
         Clube clube = Clube.builder()
@@ -60,7 +60,7 @@ public class ClubeService {
         // I. Validar se clube existe
         Clube clubeEntity = findById(id);
         // II. Validar dados do clube
-        validarClube(clubeDto);
+        validarClube(clubeDto, null);
 
         // III. Atualizar dados do clube
         Clube clubeAtualizado = Clube.builder()
@@ -174,7 +174,7 @@ public class ClubeService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clube não encontrado"));
     }
 
-    public ClubeDto validarClube(ClubeDto clubeDto) {
+    public ClubeDto validarClube(ClubeDto clubeDto, Integer id) {
         // validar dados minimos mencionados
         if (clubeDto.getNome().trim().isEmpty() || clubeDto.getUf() == null || clubeDto.getDataCriacao() == null || clubeDto.isAtivo() == false ||
                 clubeDto.getNome().trim().length() < 2 || clubeDto.getDataCriacao().isAfter(LocalDate.now())) {
@@ -185,17 +185,47 @@ public class ClubeService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Clube já existe");
         }
         // Validar data de criação
-        validarDataCriacao(clubeDto);
+        validarDataCriacao(clubeDto, id);
 
         // Conflito de dados
+        conflitoDeDados(clubeDto, id);
 
         return clubeDto;
     }
+    private void validarDataCriacao(ClubeDto clubeDto, Integer id) {
+        if (clubeDto.getDataCriacao() == null) {
+            return; // Se não há data de criação, não há o que validar
+        }
+        // Se id é null, significa que é um cadastro novo, não há partidas para validar
+        if (id == null) {
+            return;
+        }
+        List<Partida> partidas = new ArrayList<>();
+        partidas.addAll(partidaRepository.findByClubeMandanteId(id));
+        partidas.addAll(partidaRepository.findByClubeVisitanteId(id));
 
-    private void validarDataCriacao(ClubeDto clubeDto) {
-        // Validar se data de criação não é no futuro
-        if (clubeDto.getDataCriacao() != null && clubeDto.getDataCriacao().isAfter(LocalDate.now())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "A data de criação do clube não pode ser no futuro");
+        LocalDate dataCriacao = clubeDto.getDataCriacao();
+
+        // Iterar sobre cada partida para validar as datas
+        for (Partida partida : partidas) {
+            LocalDate dataPartida = partida.getDataHora().toLocalDate();
+            if (dataCriacao.isAfter(dataPartida)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "A data de criação do clube não pode ser posterior à data da partida");
+            }
+        }
+    }
+
+    public void conflitoDeDados(ClubeDto clubeDto, Integer id) {
+        if (clubeDto.getNome() == null) {
+            return;
+        }
+        List<Clube> clubes = clubeRepository.findByNomeContainingIgnoreCase(clubeDto.getNome());
+        clubes.addAll(clubeRepository.findByNome(clubeDto.getNome()));
+
+        for (Clube clube : clubes) {
+            if (clubeRepository.existsByNome(clubeDto.getNome()) && clubeRepository.findByUfAndAtivoTrue(clubeDto.getUf()).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Clube já existe");
+            }
         }
     }
 }
