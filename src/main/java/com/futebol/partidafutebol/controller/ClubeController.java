@@ -1,11 +1,13 @@
 package com.futebol.partidafutebol.controller;
 import com.futebol.partidafutebol.business.ClubeService;
+import com.futebol.partidafutebol.business.ClubeRetrospectoService;
 import com.futebol.partidafutebol.dto.ClubeDto;
-
-
+import com.futebol.partidafutebol.dto.ClubeRetrospectoDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 public class ClubeController {
 
     private final ClubeService clubeService;
+    private final ClubeRetrospectoService clubeRetrospectoService;
 
     // 1. Cadastrar um clube:
     @PostMapping
@@ -49,5 +52,19 @@ public class ClubeController {
             @RequestParam(required = false) Boolean ativo) {
         List<ClubeDto> clubesListados = clubeService.listarTodosClubes(nome, uf, dataCriacao, ativo);
         return ResponseEntity.ok(clubesListados);
+    }
+
+    // 6. Buscar retrospecto de um clube específico:
+    @GetMapping("/{id}/retrospecto")
+    public ResponseEntity<ClubeRetrospectoDto> buscarRetrospectoPorClube(@PathVariable Integer id) {
+        ClubeRetrospectoDto retrospecto = clubeRetrospectoService.buscarRetrospectoPorClube(id);
+        return ResponseEntity.ok(retrospecto);
+    }
+
+    // 7. Listar retrospecto de todos os clubes:
+    @GetMapping("/retrospecto")
+    public ResponseEntity<List<ClubeRetrospectoDto>> listarRetrospectoClubes() {
+        List<ClubeRetrospectoDto> retrospectos = clubeRetrospectoService.listarRetrospectoClubes();
+        return ResponseEntity.ok(retrospectos);
     }
 }

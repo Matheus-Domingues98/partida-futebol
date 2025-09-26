@@ -1,8 +1,10 @@
 package com.futebol.partidafutebol.business;
 import com.futebol.partidafutebol.dto.ClubeDto;
+import com.futebol.partidafutebol.dto.ClubeRetrospectoDto;
 import com.futebol.partidafutebol.dto.PartidaDto;
 import com.futebol.partidafutebol.exception.DadosInvalidosExcepcion;
 import com.futebol.partidafutebol.infrastructure.entitys.Clube;
+import com.futebol.partidafutebol.infrastructure.entitys.ClubeRetrospecto;
 import com.futebol.partidafutebol.infrastructure.entitys.Partida;
 import com.futebol.partidafutebol.infrastructure.entitys.aux.UF;
 import com.futebol.partidafutebol.infrastructure.repository.ClubeRepository;
@@ -228,6 +230,7 @@ public class ClubeService {
             }
         }
     }
+
 }
 
 

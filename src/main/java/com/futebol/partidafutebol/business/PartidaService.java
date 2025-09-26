@@ -240,8 +240,7 @@ public class PartidaService {
         for (Partida partida : partidasNoEstadio) {
             long horasEntre = Math.abs(java.time.Duration.between(partida.getDataHora(), dataHoraPartida).toHours());
             if (horasEntre < 3) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, 
-                    "O estádio já possui uma partida agendada em menos de 3 horas deste horário");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "O estádio já possui uma partida agendada em menos de 3 horas deste horário");
             }
         }
     }

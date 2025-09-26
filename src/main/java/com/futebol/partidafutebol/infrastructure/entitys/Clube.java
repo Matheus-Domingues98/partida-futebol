@@ -30,4 +30,6 @@ public class Clube {
 
     @Column(name = "status")
     private boolean ativo;
+
+
 }
