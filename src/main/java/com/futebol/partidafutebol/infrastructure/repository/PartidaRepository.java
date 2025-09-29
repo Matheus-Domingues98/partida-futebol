@@ -20,4 +20,5 @@ public interface PartidaRepository extends JpaRepository<Partida, Integer> {
 
     List<Partida> findByEstadioPartidaIdAndDataHoraBetween(Integer estadioId, LocalDateTime inicio, LocalDateTime fim);
 
+    List<Partida> findByClubeMandanteIdAndClubeVisitanteId(Integer clubeId, Integer adversarioId);
 }

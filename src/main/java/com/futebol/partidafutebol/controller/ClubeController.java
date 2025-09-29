@@ -1,8 +1,11 @@
 package com.futebol.partidafutebol.controller;
 import com.futebol.partidafutebol.business.ClubeService;
 import com.futebol.partidafutebol.business.ClubeRetrospectoService;
+import com.futebol.partidafutebol.business.ClubeRankingService;
 import com.futebol.partidafutebol.dto.ClubeDto;
+import com.futebol.partidafutebol.dto.ClubeRankingDto;
 import com.futebol.partidafutebol.dto.ClubeRetrospectoDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ public class ClubeController {
 
     private final ClubeService clubeService;
     private final ClubeRetrospectoService clubeRetrospectoService;
+    private final ClubeRankingService clubeRankingService;
 
     // 1. Cadastrar um clube:
     @PostMapping
@@ -54,17 +58,53 @@ public class ClubeController {
         return ResponseEntity.ok(clubesListados);
     }
 
-    // 6. Buscar retrospecto de um clube específico:
+    // 6. Buscar retrospecto de um clube específico: OK
     @GetMapping("/{id}/retrospecto")
     public ResponseEntity<ClubeRetrospectoDto> buscarRetrospectoPorClube(@PathVariable Integer id) {
         ClubeRetrospectoDto retrospecto = clubeRetrospectoService.buscarRetrospectoPorClube(id);
         return ResponseEntity.ok(retrospecto);
     }
 
-    // 7. Listar retrospecto de todos os clubes:
+    // 7. Listar retrospecto de todos os clubes: OK
     @GetMapping("/retrospecto")
     public ResponseEntity<List<ClubeRetrospectoDto>> listarRetrospectoClubes() {
         List<ClubeRetrospectoDto> retrospectos = clubeRetrospectoService.listarRetrospectoClubes();
         return ResponseEntity.ok(retrospectos);
+    }
+    // 8. Buscar retrospecto de um clube específico contra OS adversários: OK
+    @GetMapping("/{id}/retrospecto/{adversarioId}")
+    public ResponseEntity<?> RetrospectoContraAdversario(
+            @PathVariable Integer id,
+            @PathVariable Integer adversarioId) {
+        try {
+            List<ClubeRetrospectoDto> retrospectos = clubeRetrospectoService.retrospectoContraAdversario(id, adversarioId);
+            return ResponseEntity.ok(retrospectos);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body("Clube ou adversário não encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro interno ao calcular o retrospecto");
+        }
+    }
+
+    // 9. Confronto direto entre dois clubes: OK
+    @GetMapping("/{id}/confronto/{adversarioId}")
+    public ResponseEntity<?> ConfrontoDireto(
+            @PathVariable Integer id,
+            @PathVariable Integer adversarioId) {
+        try {
+            List<ClubeRetrospectoDto> retrospectos = clubeRetrospectoService.confrontoDireto(id, adversarioId);
+            return ResponseEntity.ok(retrospectos);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body("Clube ou adversário não encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro interno ao calcular o retrospecto");
+        }
+    }
+
+    // 10. Ranking de clubes:
+    @GetMapping("/ranking")
+    public ResponseEntity<List<ClubeRankingDto>> listarRankingClubes(@RequestParam(defaultValue = "pontos") String criterio) {
+        List<ClubeRankingDto> ranking = clubeRankingService.gerarRanking(criterio);
+        return ResponseEntity.ok(ranking);
     }
 }

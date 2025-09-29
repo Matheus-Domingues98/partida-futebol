@@ -10,17 +10,19 @@ public class PartidaDto {
     private Integer estadioPartidaId;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHora;
-    private String resultado;
+    private Integer golsMandante;
+    private Integer golsVisitante;
 
     public PartidaDto() {
     }
 
-    public PartidaDto(Integer clubeMandanteId, Integer clubeVisitanteId, LocalDateTime dataHora, Integer estadioPartidaId, String resultado) {
+    public PartidaDto(Integer clubeMandanteId, Integer clubeVisitanteId, LocalDateTime dataHora, Integer estadioPartidaId, Integer golsMandante, Integer golsVisitante) {
         this.clubeMandanteId = clubeMandanteId;
         this.clubeVisitanteId = clubeVisitanteId;
         this.dataHora = dataHora;
         this.estadioPartidaId = estadioPartidaId;
-        this.resultado = resultado;
+        this.golsMandante = golsMandante;
+        this.golsVisitante = golsVisitante;
     }
 
     public Integer getClubeMandanteId() {
@@ -55,11 +57,19 @@ public class PartidaDto {
         this.estadioPartidaId = estadioPartidaId;
     }
 
-    public String getResultado() {
-        return resultado;
+    public Integer getGolsMandante() {
+        return golsMandante;
     }
 
-    public void setResultado(String resultado) {
-        this.resultado = resultado;
+    public void setGolsMandante(Integer golsMandante) {
+        this.golsMandante = golsMandante;
+    }
+
+    public Integer getGolsVisitante() {
+        return golsVisitante;
+    }
+
+    public void setGolsVisitante(Integer golsVisitante) {
+        this.golsVisitante = golsVisitante;
     }
 }

@@ -18,6 +18,4 @@ public class ClubeRetrospectoDto {
     private Integer totalDerrotas;
     private Integer totalGolsMarcados;
     private Integer totalGolsSofridos;
-
-
 }

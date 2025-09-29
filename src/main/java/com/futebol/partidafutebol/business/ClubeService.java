@@ -49,6 +49,7 @@ public class ClubeService {
 
         // IV. Retornar DTO com dados salvos
         return new ClubeDto(
+                clubeSalvo.getId(),
                 clubeSalvo.getNome(),
                 clubeSalvo.getUf(),
                 clubeSalvo.getDataCriacao(),
@@ -78,6 +79,7 @@ public class ClubeService {
 
         // V. Retornar DTO com dados atualizados
         return new ClubeDto(
+                clubeAtualizado.getId(),
                 clubeAtualizado.getNome(),
                 clubeAtualizado.getUf(),
                 clubeAtualizado.getDataCriacao(),
@@ -97,6 +99,7 @@ public class ClubeService {
 
         // IV. Retornar clube inativado
         return new ClubeDto(
+                clubeEntity.getId(),
                 clubeEntity.getNome(),
                 clubeEntity.getUf(),
                 clubeEntity.getDataCriacao(),
@@ -110,6 +113,7 @@ public class ClubeService {
 
         // II. Retornar DTO com dados do clube
         return new ClubeDto(
+                clubeEntity.getId(),
                 clubeEntity.getNome(),
                 clubeEntity.getUf(),
                 clubeEntity.getDataCriacao(),
@@ -162,6 +166,7 @@ public class ClubeService {
         return clubes.stream()
                 .filter(clube -> dataCriacao == null || clube.getDataCriacao().equals(dataCriacao))
                 .map(clube -> new ClubeDto(
+                        clube.getId(),
                         clube.getNome(),
                         clube.getUf(),
                         clube.getDataCriacao(),

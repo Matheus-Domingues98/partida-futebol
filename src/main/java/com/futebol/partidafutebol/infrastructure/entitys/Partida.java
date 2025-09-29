@@ -36,7 +36,11 @@ public class Partida {
     @Column(name = "data_hora")
     private LocalDateTime dataHora;
 
-    @Column(name = "resultado")
-    private String resultado;
+    @Column(name = "golsMandante")
+    private Integer golsMandante;
+
+    @Column(name = "golsVisitante")
+    private Integer golsVisitante;
+
 
 }

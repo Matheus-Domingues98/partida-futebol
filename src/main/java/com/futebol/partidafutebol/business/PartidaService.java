@@ -43,7 +43,8 @@ public class PartidaService {
                 .clubeVisitante(clubeService.findById(partidaDto.getClubeVisitanteId()))
                 .estadioPartida(estadioService.findById(partidaDto.getEstadioPartidaId()))
                 .dataHora(partidaDto.getDataHora())
-                .resultado(partidaDto.getResultado())
+                .golsMandante(partidaDto.getGolsMandante())
+                .golsVisitante(partidaDto.getGolsVisitante())
                 .build();
         // IV. Salvar no banco
         Partida partidaSalva = partidaRepository.save(partida);
@@ -53,7 +54,8 @@ public class PartidaService {
                 partidaSalva.getClubeVisitante().getId(),
                 partidaSalva.getDataHora(),
                 partidaSalva.getEstadioPartida().getId(),
-                partidaSalva.getResultado()
+                partidaSalva.getGolsMandante(),
+                partidaSalva.getGolsVisitante()
         );
     }
 
@@ -71,7 +73,8 @@ public class PartidaService {
                 .clubeVisitante(partidaDto.getClubeVisitanteId() != null ? clubeService.findById(partidaDto.getClubeVisitanteId()) : partidaEntity.getClubeVisitante())
                 .estadioPartida(partidaDto.getEstadioPartidaId() != null ? estadioService.findById(partidaDto.getEstadioPartidaId()) : partidaEntity.getEstadioPartida())
                 .dataHora(partidaDto.getDataHora() != null ? partidaDto.getDataHora() : partidaEntity.getDataHora())
-                .resultado(partidaDto.getResultado() != null ? partidaDto.getResultado() : partidaEntity.getResultado())
+                .golsMandante(partidaDto.getGolsMandante() != null ? partidaDto.getGolsMandante() : partidaEntity.getGolsMandante())
+                .golsVisitante(partidaDto.getGolsVisitante() != null ? partidaDto.getGolsVisitante() : partidaEntity.getGolsVisitante())
                 .build();
 
         // IV. Salvar no banco
@@ -83,7 +86,8 @@ public class PartidaService {
                 partidaSalva.getClubeVisitante().getId(),
                 partidaSalva.getDataHora(),
                 partidaSalva.getEstadioPartida().getId(),
-                partidaSalva.getResultado()
+                partidaSalva.getGolsMandante(),
+                partidaSalva.getGolsVisitante()
         );
     }
 
@@ -103,7 +107,8 @@ public class PartidaService {
                 partidaEntity.getClubeVisitante().getId(),
                 partidaEntity.getDataHora(),
                 partidaEntity.getEstadioPartida().getId(),
-                partidaEntity.getResultado()
+                partidaEntity.getGolsMandante(),
+                partidaEntity.getGolsVisitante()
         );
     }
 
@@ -118,12 +123,13 @@ public class PartidaService {
                 partidaEntity.getClubeVisitante().getId(),
                 partidaEntity.getDataHora(),
                 partidaEntity.getEstadioPartida().getId(),
-                partidaEntity.getResultado()
+                partidaEntity.getGolsMandante(),
+                partidaEntity.getGolsVisitante()
         );
     }
 
     // 5. Listar todas as partidas
-    public List<PartidaDto> listarTodasPartidas(Integer clubeMandanteId, Integer clubeVisitanteId, Integer estadioPartidaId, LocalDateTime dataHora, String resultado) {
+    public List<PartidaDto> listarTodasPartidas(Integer clubeMandanteId, Integer clubeVisitanteId, Integer estadioPartidaId, LocalDateTime dataHora, Integer golsMandante, Integer golsVisitante) {
 
         // I. Buscar todas as partidas
         List<Partida> partidas = partidaRepository.findAll();
@@ -133,7 +139,8 @@ public class PartidaService {
                 .filter(partida -> clubeVisitanteId == null || partida.getClubeVisitante().getId().equals(clubeVisitanteId))
                 .filter(partida -> estadioPartidaId == null || partida.getEstadioPartida().getId().equals(estadioPartidaId))
                 .filter(partida -> dataHora == null || partida.getDataHora().equals(dataHora))
-                .filter(partida -> resultado == null || partida.getResultado().equals(resultado))
+                .filter(partida -> golsMandante == null || partida.getGolsMandante().equals(golsMandante))
+                .filter(partida -> golsVisitante == null || partida.getGolsVisitante().equals(golsVisitante))
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -145,7 +152,8 @@ public class PartidaService {
                 partida.getClubeVisitante().getId(),
                 partida.getDataHora(),
                 partida.getEstadioPartida().getId(),
-                partida.getResultado()
+                partida.getGolsMandante(),
+                partida.getGolsVisitante()
         );
     }
 
@@ -158,7 +166,7 @@ public class PartidaService {
     public PartidaDto validarPartida(PartidaDto partidaDto) {
         // validar dados minimos mencionados
         if (partidaDto.getClubeMandanteId().equals(partidaDto.getClubeVisitanteId()) || partidaDto.getClubeMandanteId() == null || partidaDto.getClubeVisitanteId() == null
-                || partidaDto.getEstadioPartidaId() == null || partidaDto.getDataHora() == null || partidaDto.getResultado() == null) {
+                || partidaDto.getEstadioPartidaId() == null || partidaDto.getDataHora() == null || partidaDto.getGolsMandante() == null || partidaDto.getGolsVisitante() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Partida inexistente");
         }
 

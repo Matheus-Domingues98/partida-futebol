@@ -54,8 +54,9 @@ public class PartidaController {
             @RequestParam(required = false) Integer clubeVisitanteId,
             @RequestParam(required = false) Integer estadioPartidaId,
             @RequestParam(required = false) LocalDateTime dataHora,
-            @RequestParam(required = false) String resultado) {
-        List<PartidaDto> partidasListadas = partidaService.listarTodasPartidas(clubeMandanteId, clubeVisitanteId, estadioPartidaId, dataHora, resultado);
+            @RequestParam(required = false) Integer golsMandante,
+            @RequestParam(required = false) Integer golsVisitante) {
+        List<PartidaDto> partidasListadas = partidaService.listarTodasPartidas(clubeMandanteId, clubeVisitanteId, estadioPartidaId, dataHora, golsMandante, golsVisitante);
         return ResponseEntity.ok(partidasListadas);
     }
 }

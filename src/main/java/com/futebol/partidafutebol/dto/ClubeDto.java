@@ -4,20 +4,32 @@ import com.futebol.partidafutebol.infrastructure.entitys.aux.UF;
 import lombok.Builder;
 
 import java.time.LocalDate;
+
 @Builder
 public class ClubeDto {
 
+    private Integer id;
     private String nome;
     private UF uf;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataCriacao;
     private boolean ativo;
 
-    public ClubeDto(String nome, UF uf, LocalDate dataCriacao, boolean ativo) {
+    public ClubeDto(Integer id, String nome, UF uf, LocalDate dataCriacao, boolean ativo) {
+        this.id = id;
         this.nome = nome;
         this.uf = uf;
         this.dataCriacao = dataCriacao; 
         this.ativo = ativo;
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public boolean isAtivo() {
