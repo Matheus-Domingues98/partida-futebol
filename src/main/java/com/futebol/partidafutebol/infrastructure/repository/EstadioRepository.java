@@ -1,6 +1,5 @@
 package com.futebol.partidafutebol.infrastructure.repository;
 
-import com.futebol.partidafutebol.infrastructure.entitys.Clube;
 import com.futebol.partidafutebol.infrastructure.entitys.Estadio;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;

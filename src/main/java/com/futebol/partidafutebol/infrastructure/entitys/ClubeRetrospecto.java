@@ -5,8 +5,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "clube_retrospecto")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

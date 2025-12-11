@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "genai_code_review": {
+      "url": "https://genai-code-review-mcp.melioffice.com/mcp"
+    },
+    "meli_appsec_codeguard": {
+      "url": "https://codeguard-mcp.melioffice.com/mcp/"
+    },
+    "backend": {
+      "command": "mcp-remote-proxy",
+      "args": [
+        "https://mcp.melioffice.com/namespaces/backend/mcp",
+        "--transport",
+        "http"
+      ]
+    },
+    "frontend": {
+      "command": "mcp-remote-proxy",
+      "args": [
+        "https://mcp.melioffice.com/namespaces/frontend/mcp",
+        "--transport",
+        "http"
+      ]
+    }
+  }
+}

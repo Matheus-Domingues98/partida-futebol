@@ -101,7 +101,7 @@ public class ClubeController {
         }
     }
 
-    // 10. Ranking de clubes:
+    // 10. Ranking de clubes: OK
     @GetMapping("/ranking")
     public ResponseEntity<List<ClubeRankingDto>> listarRankingClubes(@RequestParam(defaultValue = "pontos") String criterio) {
         List<ClubeRankingDto> ranking = clubeRankingService.gerarRanking(criterio);

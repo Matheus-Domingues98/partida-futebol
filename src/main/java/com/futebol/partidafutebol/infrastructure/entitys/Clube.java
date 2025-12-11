@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "clube")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -30,6 +29,4 @@ public class Clube {
 
     @Column(name = "status")
     private boolean ativo;
-
-
 }
